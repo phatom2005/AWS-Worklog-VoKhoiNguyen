@@ -1,57 +1,29 @@
 ---
 title: "Week 1 Worklog"
-date: 2024-01-01
+date: 2026-01-05
 weight: 1
 chapter: false
 pre: " <b> 1.1. </b> "
 ---
-{{% notice warning %}} 
-⚠️ **Note:** The following information is for reference purposes only. Please **do not copy verbatim** for your own report, including this warning.
-{{% /notice %}}
-
 
 ### Week 1 Objectives:
-
-* Connect and get acquainted with members of First Cloud Journey.
-* Understand basic AWS services, how to use the console & CLI.
+* Get acquainted with the internship environment and team, read the SmartHire-AI project rules.
+* Create an AWS account and learn how to control costs, request support.
+* Understand and practice AWS IAM: identity and access management.
 
 ### Tasks to be carried out this week:
-| Day | Task                                                                                                                                                                                                   | Start Date | Completion Date | Reference Material                        |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | --------------- | ----------------------------------------- |
-| 2   | - Get acquainted with FCJ members <br> - Read and take note of internship unit rules and regulations                                                                                                   | 08/11/2025 | 08/11/2025      |
-| 3   | - Learn about AWS and its types of services <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                              | 08/12/2025 | 08/12/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Create AWS Free Tier account <br> - Learn about AWS Console & AWS CLI <br> - **Practice:** <br>&emsp; + Create AWS account <br>&emsp; + Install & configure AWS CLI <br> &emsp; + How to use AWS CLI | 08/13/2025 | 08/13/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Learn basic EC2: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - SSH connection methods to EC2 <br> - Learn about Elastic IP   <br>                            | 08/14/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Practice:** <br>&emsp; + Launch an EC2 instance <br>&emsp; + Connect via SSH <br>&emsp; + Attach an EBS volume                                                                                     | 08/15/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
 
+| Day | Task | Start Date | Completion Date | Reference Material |
+|-----|-----------|--------------|-----------------|----------|
+| Mon | Get acquainted with the team, read rules & SmartHire-AI project overview | 01/05/2026 | 01/05/2026 | — |
+| Tue | **Create new AWS Account** — create AWS Free Tier account, set up MFA for root user | 01/06/2026 | 01/06/2026 | https://cloudjourney.awsstudygroup.com/ |
+| Wed | **Manage usage costs with AWS Budgets** — create budget alerts, view Cost Explorer; **Request support with AWS Support** — learn about support plans | 01/07/2026 | 01/07/2026 | https://cloudjourney.awsstudygroup.com/ |
+| Thu | **Access Management with AWS IAM** — create IAM User, Group, Policy; understand least privilege principle | 01/08/2026 | 01/08/2026 | https://cloudjourney.awsstudygroup.com/ |
+| Fri | **Practice IAM:** create IAM User for dev environment, attach policy, test access to individual services | 01/09/2026 | 01/09/2026 | https://cloudjourney.awsstudygroup.com/ |
 
 ### Week 1 Achievements:
-
-* Understood what AWS is and mastered the basic service groups: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
-
-* Successfully created and configured an AWS Free Tier account.
-
-* Became familiar with the AWS Management Console and learned how to find, access, and use services via the web interface.
-
-* Installed and configured AWS CLI on the computer, including:
-  * Access Key
-  * Secret Key
-  * Default Region
-  * ...
-
-* Used AWS CLI to perform basic operations such as:
-
-  * Check account & configuration information
-  * Retrieve the list of regions
-  * View EC2 service
-  * Create and manage key pairs
-  * Check information about running services
-  * ...
-
-* Acquired the ability to connect between the web interface and CLI to manage AWS resources in parallel.
-* ...
+* Successfully created an AWS Free Tier account and enabled MFA for the root user.
+* Set up AWS Budget alerts to control costs during the internship.
+* Understood AWS Support plans and how to create a support case when issues arise.
+* Created IAM Users, Groups, and Policies following the least privilege principle; distinguished between IAM Users and Root accounts.
+* Successfully applied IAM Policies to restrict access by specific AWS services.

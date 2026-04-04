@@ -1,57 +1,28 @@
 ---
 title: "Week 3 Worklog"
-date: 2024-01-01
-weight: 1
+date: 2026-01-19
+weight: 3
 chapter: false
 pre: " <b> 1.3. </b> "
 ---
-{{% notice warning %}} 
-⚠️ **Note:** The following information is for reference purposes only. Please **do not copy verbatim** for your own report, including this warning.
-{{% /notice %}}
-
 
 ### Week 3 Objectives:
-
-* Connect and get acquainted with members of First Cloud Journey.
-* Understand basic AWS services, how to use the console & CLI.
+* Learn about static hosting and object storage with Amazon S3.
+* Create and manage databases with Amazon RDS.
+* Optimize costs with Amazon Lightsail and automatically scale with EC2 Auto Scaling.
 
 ### Tasks to be carried out this week:
-| Day | Task                                                                                                                                                                                                   | Start Date | Completion Date | Reference Material                        |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | --------------- | ----------------------------------------- |
-| 2   | - Get acquainted with FCJ members <br> - Read and take note of internship unit rules and regulations                                                                                                   | 08/11/2025 | 08/11/2025      |
-| 3   | - Learn about AWS and its types of services <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                              | 08/12/2025 | 08/12/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Create AWS Free Tier account <br> - Learn about AWS Console & AWS CLI <br> - **Practice:** <br>&emsp; + Create AWS account <br>&emsp; + Install & configure AWS CLI <br> &emsp; + How to use AWS CLI | 08/13/2025 | 08/13/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Learn basic EC2: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - SSH connection methods to EC2 <br> - Learn about Elastic IP   <br>                            | 08/14/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Practice:** <br>&emsp; + Launch an EC2 instance <br>&emsp; + Connect via SSH <br>&emsp; + Attach an EBS volume                                                                                     | 08/15/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
 
+| Day | Task | Start Date | Completion Date | Reference Material |
+|-----|-----------|--------------|-----------------|----------|
+| Mon | **Hosting static website with Amazon S3** — create S3 bucket, enable static website hosting, configure bucket policy, upload HTML/CSS files | 01/19/2026 | 01/19/2026 | https://cloudjourney.awsstudygroup.com/ |
+| Tue | **Create a database with Amazon RDS** — create RDS PostgreSQL instance, configure subnet group, security group; connect from EC2 | 01/20/2026 | 01/20/2026 | https://cloudjourney.awsstudygroup.com/ |
+| Wed | **Practice RDS:** create database, run basic queries, learn automated backup, Multi-AZ deployment | 01/21/2026 | 01/21/2026 | https://cloudjourney.awsstudygroup.com/ |
+| Thu | **Optimize compute costs with Amazon Lightsail** — understand Lightsail vs EC2, create Lightsail instance, compare pricing | 01/22/2026 | 01/22/2026 | https://cloudjourney.awsstudygroup.com/ |
+| Fri | **Automate Application Scaling with EC2 Autoscaling** — create Launch Template, Auto Scaling Group, scaling policy; test scale out/in | 01/23/2026 | 01/23/2026 | https://cloudjourney.awsstudygroup.com/ |
 
 ### Week 3 Achievements:
-
-* Understood what AWS is and mastered the basic service groups: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
-
-* Successfully created and configured an AWS Free Tier account.
-
-* Became familiar with the AWS Management Console and learned how to find, access, and use services via the web interface.
-
-* Installed and configured AWS CLI on the computer, including:
-  * Access Key
-  * Secret Key
-  * Default Region
-  * ...
-
-* Used AWS CLI to perform basic operations such as:
-
-  * Check account & configuration information
-  * Retrieve the list of regions
-  * View EC2 service
-  * Create and manage key pairs
-  * Check information about running services
-  * ...
-
-* Acquired the ability to connect between the web interface and CLI to manage AWS resources in parallel.
-* ...
+* Successfully hosted a static website on S3 with a custom bucket policy; understood how S3 object storage differs from traditional file systems.
+* Created and connected to RDS PostgreSQL — the foundation for the SmartHire project's database (RDS Multi-AZ + RDS Proxy).
+* Understood the difference between Lightsail and EC2 and when to choose each.
+* Configured EC2 Auto Scaling Group with scaling policies — understood the automatic scaling mechanism that SmartHire uses for ECS.

@@ -1,57 +1,28 @@
 ---
 title: "Week 9 Worklog"
-date: 2024-01-01
-weight: 1
+date: 2026-03-02
+weight: 9
 chapter: false
 pre: " <b> 1.9. </b> "
 ---
-{{% notice warning %}} 
-⚠️ **Note:** The following information is for reference purposes only. Please **do not copy verbatim** for your own report, including this warning.
-{{% /notice %}}
-
 
 ### Week 9 Objectives:
-
-* Connect and get acquainted with members of First Cloud Journey.
-* Understand basic AWS services, how to use the console & CLI.
+* Read and understand two AI engines: `job_suggestion_engine.py` (for Candidates) and `candidate_ranking_engine.py` (for Recruiters).
+* Build REST APIs for the Recruiter Dashboard and Candidate Profile.
+* Complete CV management endpoints (view, delete) integrating data from RDS PostgreSQL.
 
 ### Tasks to be carried out this week:
-| Day | Task                                                                                                                                                                                                   | Start Date | Completion Date | Reference Material                        |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | --------------- | ----------------------------------------- |
-| 2   | - Get acquainted with FCJ members <br> - Read and take note of internship unit rules and regulations                                                                                                   | 08/11/2025 | 08/11/2025      |
-| 3   | - Learn about AWS and its types of services <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                              | 08/12/2025 | 08/12/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Create AWS Free Tier account <br> - Learn about AWS Console & AWS CLI <br> - **Practice:** <br>&emsp; + Create AWS account <br>&emsp; + Install & configure AWS CLI <br> &emsp; + How to use AWS CLI | 08/13/2025 | 08/13/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Learn basic EC2: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - SSH connection methods to EC2 <br> - Learn about Elastic IP   <br>                            | 08/14/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Practice:** <br>&emsp; + Launch an EC2 instance <br>&emsp; + Connect via SSH <br>&emsp; + Attach an EBS volume                                                                                     | 08/15/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
 
+| Day | Task | Start Date | Completion Date |
+|-----|-----------|--------------|-----------------|
+| Mon | Understand `job_suggestion_engine.py`: uses Bedrock (Cohere Embed v3) to vectorize CVs, find matching jobs from DynamoDB, and push results via AppSync | 03/02/2026 | 03/02/2026 |
+| Tue | Understand `candidate_ranking_engine.py`: ranks candidates by `matchingScore` using Bedrock (Claude 3.5 Sonnet), pushes results via AppSync | 03/03/2026 | 03/03/2026 |
+| Wed | Implement `GET /api/candidates/{profileId}` and `GET /api/cv/my-profiles` — profile APIs for Candidates | 03/04/2026 | 03/04/2026 |
+| Thu | Implement `GET /api/jobs/{jobId}/candidates` — ranked candidate list by job; `DELETE /api/cv/{profileId}` with authorization | 03/05/2026 | 03/05/2026 |
+| Fri | Implement `CandidateService`: GetCandidatesByJob, GetCandidateDetails, UpdateCandidateStatus (RDS PostgreSQL via RDS Proxy) | 03/06/2026 | 03/06/2026 |
 
 ### Week 9 Achievements:
-
-* Understood what AWS is and mastered the basic service groups: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
-
-* Successfully created and configured an AWS Free Tier account.
-
-* Became familiar with the AWS Management Console and learned how to find, access, and use services via the web interface.
-
-* Installed and configured AWS CLI on the computer, including:
-  * Access Key
-  * Secret Key
-  * Default Region
-  * ...
-
-* Used AWS CLI to perform basic operations such as:
-
-  * Check account & configuration information
-  * Retrieve the list of regions
-  * View EC2 service
-  * Create and manage key pairs
-  * Check information about running services
-  * ...
-
-* Acquired the ability to connect between the web interface and CLI to manage AWS resources in parallel.
-* ...
+* Mastered Routing Choice in Step Functions: if CV upload → `JobSuggestionEngine` + `CandidateRankingEngine`; if JD upload → only update DynamoDB vector cache.
+* `JobSuggestionEngine` calls Bedrock Cohere Embed v3 to embed CVs, matches vectors with cached JDs in DynamoDB, and pushes results via the `publishJobSuggestions` AppSync mutation → Candidates receive them in real-time.
+* `CandidateRankingEngine` uses Claude 3.5 Sonnet to analyze and rank candidates, pushes results via `publishCandidateRanking` → Recruiter Dashboard receives them in real-time.
+* Fully completed candidate profile REST APIs; security: users can only delete their own CVs (`profile.UserId != user.Id` → 403 Forbidden).
