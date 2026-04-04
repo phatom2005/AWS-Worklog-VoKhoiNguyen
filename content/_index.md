@@ -25,7 +25,7 @@ chapter: false
 
 &emsp; **Internship Period:** From January 05, 2026 to April 05, 2026
 
-![Your profile picture](/images/avatar.png?)
+![Your profile picture](images/avatar.png?)
 
 
 
