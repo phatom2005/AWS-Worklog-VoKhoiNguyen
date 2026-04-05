@@ -31,7 +31,7 @@ The solution allows HR to focus on high-value tasks rather than manually reading
 
 The platform uses a Serverless architecture with a clear separation between the **API layer** and heavy **background processing** pipelines. All data processing is performed asynchronously to ensure a seamless user experience:
 
-![SmartHire AI Overall Architecture](/static/images/2-Proposal/smarthire_architecture.png)
+![SmartHire AI Overall Architecture](/images/2-Proposal/smarthire_architecture.png)
 
 #### AWS Services Used
 

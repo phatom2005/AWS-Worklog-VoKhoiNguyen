@@ -31,7 +31,7 @@ Giải pháp giúp HR tập trung vào các công việc có giá trị cao thay
 
 Nền tảng sử dụng kiến trúc phi máy chủ (Serverless), phân tách rõ ràng giữa **API layer** và các luồng **background processing** nặng. Toàn bộ xử lý dữ liệu được thực hiện bất đồng bộ để không ảnh hưởng đến trải nghiệm người dùng:
 
-![Kiến trúc tổng thể SmartHire AI](/static/images/2-Proposal/smarthire_architecture.png)
+![Kiến trúc tổng thể SmartHire AI](/images/2-Proposal/smarthire_architecture.png)
 
 #### Các dịch vụ AWS sử dụng
 
