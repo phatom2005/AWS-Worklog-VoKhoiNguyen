@@ -1,44 +1,46 @@
 ---
 title: "Events Participated"
-date: 2024-01-01
+date: 2026-04-05
 weight: 4
 chapter: false
 pre: " <b> 4. </b> "
 ---
 
-{{% notice warning %}}
-⚠️ **Note:** The information below is for reference purposes only. Please **do not copy it verbatim** for your report, including this warning.
-{{% /notice %}}
+# Events Participated
 
-> In this section, you should list and describe in detail the events you have participated in during your internship or work experience.  
-> 
-> Each event should be presented in the format Event 1, Event 2, Event 3…, along with the following details:
-> * Event name
-> * Date and time
-> * Location (if applicable)
-> * Your role in the event (attendee, event support, speaker, etc.)
-> * A brief description of the event’s content and main activities
-> * Outcomes or value gained (lessons learned, new skills, contribution to the team/project)
-> * This listing helps demonstrate your actual participation as well as the soft skills and experience you have gained from each event.
+During my internship at the **SmartHire-AI** project, besides completing my professional tasks, I also actively participated in community events and in-depth workshop series organized by First Cloud AI Journey (FCJ). 
 
-During my internship, I participated in two events. Each one was a memorable experience that provided new, interesting, and useful knowledge, along with gifts and wonderful moments.
+These events not only helped me stay updated with the latest technology trends on AWS (especially Cloud, DevOps, and Generative AI) but also created opportunities to expand my network, interact with industry experts, and shape my future career path.
+
+Below is a list of typical events I participated in, from which I gained many valuable lessons:
 
 ### [Event 1](4.1-Event1/)  
-&emsp;**Event Name:** GenAI-powered App-DB Modernization workshop  
+&emsp;**Event Name:** AWS re:Invent Recap HCMC  
 
-&emsp;**Date & Time:** 09:00, August 13, 2025  
+&emsp;**Date & Time:** 29/01/2026  
 
-&emsp;**Location:** 26th Floor, Bitexco Tower, 02 Hai Trieu Street, Saigon Ward, Ho Chi Minh City  
+&emsp;**Location:** Bitexco Financial Tower, 26th Floor, Ho Chi Minh City  
 
 &emsp;**Role:** Attendee  
 
 ---
 
 ### [Event 2](4.2-Event2/)  
-&emsp;**Event Name:** GenAI-powered App-DB Modernization workshop  
+&emsp;**Event Name:** FCAJ Community Day  
 
-&emsp;**Date & Time:** 09:00, August 13, 2025  
+&emsp;**Date & Time:** 08:30, 21/03/2026  
 
-&emsp;**Location:** 26th Floor, Bitexco Tower, 02 Hai Trieu Street, Saigon Ward, Ho Chi Minh City  
+&emsp;**Location:** Bitexco Financial Tower, 26th Floor, Ho Chi Minh City  
 
 &emsp;**Role:** Attendee  
+
+---
+
+### [Event 3](4.3-Event3/)  
+&emsp;**Event Name:** Cloud Mastery Series  
+
+&emsp;**Date & Time:** 05/01/2026  
+
+&emsp;**Location:** Academic Hall, 5th Floor, FPT University Ho Chi Minh City Campus  
+
+&emsp;**Role:** Attendee

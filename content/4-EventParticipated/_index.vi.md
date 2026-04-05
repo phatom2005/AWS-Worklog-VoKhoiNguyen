@@ -1,46 +1,46 @@
 ---
-title: "Các events đã tham gia"
-date: 2024-01-01
+title: "Các sự kiện đã tham gia"
+date: 2026-04-05
 weight: 4
 chapter: false
 pre: " <b> 4. </b> "
 ---
 
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
+# Các sự kiện đã tham gia
 
-> Trong phần này, các bạn cần liệt kê và mô tả chi tiết các sự kiện (event) mà mình đã tham gia trong suốt quá trình thực tập hoặc làm việc. 
-> 
-> Mỗi sự kiện nên được trình bày theo định dạng Event 1, Event 2, Event 3…, kèm theo các thông tin:
-> * Tên sự kiện
-> * Thời gian tổ chức
-> * Địa điểm (nếu có)
-> * Vai trò của bạn trong sự kiện (người tham dự, hỗ trợ tổ chức, diễn giả, v.v.)
-> * Mô tả ngắn gọn nội dung và hoạt động chính trong sự kiện
-> * Kết quả hoặc giá trị đạt được (bài học, kỹ năng mới, đóng góp cho nhóm/dự án)
-> * Việc liệt kê này giúp thể hiện rõ sự tham gia thực tế của bạn, cũng như các kỹ năng mềm và kinh nghiệm bạn đã tích lũy qua từng sự kiện.
+Trong suốt quá trình thực tập tại dự án **SmartHire-AI**, bên cạnh việc hoàn thành các công việc chuyên môn, tôi cũng tích cực tham gia các sự kiện cộng đồng và chuỗi hội thảo chuyên sâu do First Cloud AI Journey (FCJ) tổ chức. 
 
+Những sự kiện này không chỉ giúp tôi cập nhật các xu hướng công nghệ mới nhất trên AWS (đặc biệt là Cloud, DevOps và Generative AI) mà còn tạo cơ hội để mở rộng network, giao lưu với các chuyên gia trong ngành và định hướng lộ trình phát triển nghề nghiệp trong tương lai.
 
-Trong quá trình thực tập, em đã tham gia 2 events, với mỗi event là một trải nghiệm đáng nhớ với những kiến thức mới, hay và bổ ích, cùng với đó là nhứng món quà và những khoảnh khắc rất tuyệt vời.
+Dưới đây là danh sách các sự kiện tiêu biểu mà tôi đã tham gia và đúc kết được nhiều bài học giá trị:
 
-### [Event 1](4.1-Event1/)
-&emsp;**Tên sự kiện:** GenAI-powered App-DB Modernization workshop
+### [Sự kiện 1](4.1-Event1/)  
+&emsp;**Tên sự kiện:** AWS re:Invent Recap HCMC  
 
-&emsp;**Thời gian:** 09:00 ngày 13/08/2025
+&emsp;**Thời gian:** 29/01/2026  
 
-&emsp;**Địa điểm:** Tầng 26, tòa nhà Bitexco, số 02 đường Hải Triều, phường Sài Gòn, thành phố Hồ Chí Minh
+&emsp;**Địa điểm:** Bitexco Financial Tower, Tầng 26, TP. Hồ Chí Minh   
 
-&emsp;**Vai trò trong sự kiện:** Người tham dự 
+&emsp;**Vai trò:** Người tham dự  
 
+---
 
+### [Sự kiện 2](4.2-Event2/)  
+&emsp;**Tên sự kiện:** FCAJ Community Day  
 
-### [Event 2](4.2-Event2/)
-&emsp;**Tên sự kiện:** GenAI-powered App-DB Modernization workshop
+&emsp;**Thời gian:** 08:30, 21/03/2026  
 
-&emsp;**Thời gian:** 09:00 ngày 13/08/2025
+&emsp;**Địa điểm:** Bitexco Financial Tower, Tầng 26, TP. Hồ Chí Minh  
 
-&emsp;**Địa điểm:** Tầng 26, tòa nhà Bitexco, số 02 đường Hải Triều, phường Sài Gòn, thành phố Hồ Chí Minh
+&emsp;**Vai trò:** Người tham dự  
 
-&emsp;**Vai trò trong sự kiện:** Người tham dự 
+---
 
+### [Sự kiện 3](4.3-Event3/)  
+&emsp;**Tên sự kiện:** Cloud Mastery Series  
+
+&emsp;**Thời gian:** 05/01/2026  
+
+&emsp;**Địa điểm:** Hall Academic, Lầu 5, Campus Đại học FPT TP. Hồ Chí Minh  
+
+&emsp;**Vai trò:** Người tham dự

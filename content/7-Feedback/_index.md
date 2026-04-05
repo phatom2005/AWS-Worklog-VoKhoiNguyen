@@ -1,44 +1,47 @@
 ---
-title: "Sharing and Feedback"
-date: 2024-01-01
+title: "Feedback & Suggestions"
+date: 2026-04-05
 weight: 7
 chapter: false
 pre: " <b> 7. </b> "
 ---
 
+### General Evaluation
 
-> Here, you can freely share your personal opinions about your experience participating in the First Cloud Journey program. This will help the FCJ team improve any shortcomings based on the following aspects:
+**1. Working Environment**
+The working environment at FCJ is very friendly and open. Team members are always ready to support when I encounter difficulties, even outside working hours. Due to the large number of interns, there aren't many opportunities to work directly at the office, so most of the work is done remotely. Overall, the working environment is still very positive and provides good conditions for learning.
 
-### Overall Evaluation
+**2. Support from Mentor / Team Admin**
+The mentor provides clear guidance, always encourages me to research on my own before asking, and is ready to explain when needed. Besides technical support, FCJ also organizes workshops and events that provide useful knowledge directly related to the project. I highly appreciate this approach as it helps me develop independent thinking rather than just waiting for instructions.
 
-**1. Working Environment**  
-The working environment is very friendly and open. FCJ members are always willing to help whenever I encounter difficulties, even outside working hours. The workspace is tidy and comfortable, helping me focus better. However, I think it would be nice to have more social gatherings or team bonding activities to strengthen relationships.
+**3. Alignment between Work and Major**
+AWS services were almost entirely new to me before joining this program. However, the internship has helped me better understand Cloud Computing and its role in the Information Technology field. The SmartHire AI project relates to the backend knowledge and system design that I learned at university, while also introducing many new practical concepts such as Serverless Architecture and Event-Driven Design.
 
-**2. Support from Mentor / Team Admin**  
-The mentor provides very detailed guidance, explains clearly when I don’t understand, and always encourages me to ask questions. The admin team supports administrative tasks, provides necessary documents, and creates favorable conditions for me to work effectively. I especially appreciate that the mentor allows me to try and solve problems myself instead of just giving the answer.
+**4. Opportunities for Learning & Skill Development**
+Throughout the internship, I learned many new skills: working with AWS services (S3, Lambda, SQS, DynamoDB, Step Functions...), serverless backend programming, deploying infrastructure using IaC (Terraform, SAM), and effective teamwork in a remote environment. These are skills I would hardly have the chance to practice if I only studied at university.
 
-**3. Relevance of Work to Academic Major**  
-The tasks I was assigned align well with the knowledge I learned at university, while also introducing me to new areas I had never encountered before. This allowed me to both strengthen my foundational knowledge and gain practical skills.
+**5. Culture & Team Spirit**
+The culture at FCJ is very positive — everyone respects each other, works seriously but still maintains a fun atmosphere. My team has a high sense of responsibility; everyone consciously completes their tasks and supports each other when needed, especially during the project's final phases. Even though we work mainly online, the team still maintains good cohesion.
 
-**4. Learning & Skill Development Opportunities**  
-During the internship, I learned many new skills such as using project management tools, teamwork skills, and professional communication in a corporate environment. The mentor also shared valuable real-world experiences that helped me better plan my career path.
-
-**5. Company Culture & Team Spirit**  
-The company culture is very positive: everyone respects each other, works seriously but still keeps things enjoyable. When there are urgent projects, everyone works together and supports one another regardless of their position. This made me feel like a real part of the team, even as an intern.
-
-**6. Internship Policies / Benefits**  
-The company provides an internship allowance and offers flexible working hours when needed. In addition, having the opportunity to join internal training sessions is a big plus.
+**6. Policies / Benefits for Interns**
+The program has flexible working hours and supports remote work, which fits well with a student's study schedule. Additionally, being able to participate in events and the AWS Study Group is a big plus, helping me expand my knowledge beyond the project's scope.
 
 ---
 
-### Additional Questions
-- What did you find **most satisfying** during your internship?  
-- What do you think the company **should improve** for future interns?  
-- If recommending to a friend, would you **suggest they intern here**? Why or why not?  
+### Other Questions
+
+**What were you most satisfied with during your internship?**
+What I am most satisfied with is directly building a real-world system on AWS. Designing a CV processing pipeline with an Event-Driven architecture and seeing it work exactly as expected is a highly valuable experience that I couldn't get from just studying theory at school.
+
+**Would you recommend interning here to your friends? Why?**
+Yes. This is a great environment to gain practical knowledge about Cloud and AWS — something that university programs usually don't have the condition to delve deeply into. However, I would advise my friends to be prepared with a high spirit of self-study and proactiveness from the beginning, because most of the work is done remotely and requires self-discipline.
 
 ---
 
-### Suggestions & Expectations
-- Do you have any suggestions to improve the internship experience?  
-- Would you like to continue this program in the future?  
-- Any other comments (free sharing):
+### Suggestions & Wishes
+
+**Would you like to continue with this program in the future?**
+Yes, if given the opportunity, I am willing to participate again or contribute as a mentor for future batches.
+
+**Other feedback:**
+Overall, this was a very meaningful internship. I have grown not only technically but also in terms of teamwork and problem-solving mindset in a real-world environment.
