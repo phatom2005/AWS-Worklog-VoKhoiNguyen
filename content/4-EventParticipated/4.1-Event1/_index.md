@@ -1,5 +1,5 @@
 ---
-title: "AWS re:Invent Recap HCMC"
+title: "Invent Recap HCMC"
 date: 2026-01-29
 weight: 1
 chapter: false
@@ -47,8 +47,5 @@ Attending the **“AWS re:Invent Recap HCMC”** was extremely valuable, as it b
 * **Deep technical exposure:** The focus on purpose-built databases and AI-assisted code transformation provided practical insights into solving technical debt.
 * **Networking and discussions:** The event offered excellent opportunities to exchange ideas with local cloud enthusiasts and AWS architects, reinforcing the importance of community in the tech industry.
 * **Lessons learned:** The modernization journey is continuous. Leveraging AI not just for features, but to refactor and secure the underlying infrastructure itself, is the new standard.
-
-### Some event photos
-*[Add your event photos here]*
 
 **Overall, the event not only provided critical technical updates but also helped me reshape my thinking about scaling cloud infrastructure, modernizing legacy apps, and choosing the right architectural patterns.**

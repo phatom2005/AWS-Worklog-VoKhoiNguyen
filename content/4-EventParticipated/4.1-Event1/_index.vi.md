@@ -1,5 +1,5 @@
 ---
-title: "AWS re:Invent Recap HCMC"
+title: "Invent Recap HCMC"
 date: 2026-01-29
 weight: 1
 chapter: false
@@ -48,7 +48,5 @@ Việc tham gia **“AWS re:Invent Recap HCMC”** mang lại giá trị cực k
 * **Giao lưu và thảo luận:** Sự kiện mang đến những cơ hội tuyệt vời để trao đổi ý tưởng với những người đam mê cloud và các kiến trúc sư AWS tại địa phương, củng cố tầm quan trọng của cộng đồng trong ngành công nghệ.
 * **Bài học kinh nghiệm:** Hành trình hiện đại hóa là một quá trình liên tục. Tận dụng AI không chỉ cho các tính năng, mà để refactor và bảo mật chính cơ sở hạ tầng nền tảng, đang trở thành tiêu chuẩn mới.
 
-### Một số hình ảnh sự kiện
-*[Thêm hình ảnh sự kiện của bạn vào đây]*
 
 **Nhìn chung, sự kiện không chỉ cung cấp những cập nhật kỹ thuật quan trọng mà còn giúp tôi định hình lại tư duy về việc mở rộng hạ tầng đám mây, hiện đại hóa ứng dụng cũ và lựa chọn các pattern kiến trúc phù hợp.**
