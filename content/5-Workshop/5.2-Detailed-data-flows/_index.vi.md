@@ -1,86 +1,198 @@
 ---
-title : "Kiến trúc"
-date : 2024-01-01 
-weight : 2
+title : "Detailed Data Flows"
+date : 2026-01-05
+weight : 2 
 chapter : false
 pre : " <b> 5.2. </b> "
 ---
 
-#### Tổng quan Kiến trúc SmartHire-AI
+### A. CvJdProcessor Lambda — Luồng CV
 
-SmartHire-AI tận dụng một kiến trúc Serverless tinh vi của AWS mà tự động mở rộng quy mô dựa trên nhu cầu. Dưới đây là thiết kế hệ thống hoàn chỉnh:
+**Kích hoạt (Trigger):** Step Functions (từ IngestionTrigger thông qua S3 → SQS)
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                     TẦNG WEB (Frontend)                      │
-│  React SPA (Vite) → CloudFront CDN → S3 Static Hosting      │
-│                  + Cognito Authentication                    │
-└─────────────────────────────────────────────────────────────┘
-                            │
-        ┌───────────────────┼───────────────────┐
-        │                   │                   │
-┌───────▼──────┐  ┌─────────▼────────┐  ┌──────▼──────────┐
-│  API Layer   │  │  Stream Layer    │  │  Data Layer    │
-│              │  │                  │  │                 │
-│ API Gateway  │  │   AWS AppSync    │  │ RDS PostgreSQL │
-│ → Lambda     │  │   (GraphQL       │  │ DynamoDB       │
-│ (.NET 8)     │  │    Subscriptions)│  │ S3 Buckets     │
-└──────────────┘  └──────────────────┘  └─────────────────┘
+**Đầu vào (Input):**
+
+```json
+{
+  "profile_id": "candidate-uuid",
+  "job_id": "job-uuid | null",
+  "file_key": "candidates/{candidateId}/cv.pdf",
+  "bucket": "smarthire-raw-assets",
+  "jd_text": "Văn bản mô tả công việc (tùy chọn, từ cache DynamoDB)",
+  "job_title": "Senior Backend Engineer (tùy chọn)",
+  "required_skills": ["AWS", "Python"],
+  "jd_vector": [0.12, 0.45, "...1024 số thực (tùy chọn, đã lưu cache)"]
+}
 ```
 
-#### Các Thành phần Chính
+**Các Bước Xử lý:**
 
-**1. Frontend (Tầng Web)**
-- **React SPA**: Xây dựng bằng Vite, TypeScript để kích thước bundle tối ưu
-- **CDN**: CloudFront để phân phối toàn cầu
-- **Hosting**: S3 static website hosting
-- **Auth**: Cognito user pool với Google OAuth federation
+| Bước | Thao tác | Dịch vụ | Mô tả |
+| :--- | :--- | :--- | :--- |
+| 1 | Textract | AWS Textract | Trích xuất văn bản thô từ file PDF trên S3 (bất đồng bộ) |
+| 2 | PII Masking | spaCy NER | Ẩn các nhãn PERSON, ORG, GPE, LOC, NORP bằng các token trung tính |
+| 3 | Claude Agent 1 | Bedrock (Claude) | Trích xuất kỹ năng, thâm niên, kinh nghiệm, điểm mạnh/lỗ hổng |
+| 4 | Claude Agent 2 | Bedrock (Claude) | Tạo 3 câu hỏi phỏng vấn nhắm đúng mục tiêu |
+| 5 | Bi-Encoder | Bedrock (Cohere) | Nhúng văn bản CV đã ẩn danh dưới dạng `search_document` (1024-dim) |
+| 6 | Cross-Encoder | sentence-transformers | Chấm điểm các đoạn CV so với văn bản JD (nếu có cung cấp JD) |
+| 7 | Hybrid Score | Local computation | Kết hợp điểm số BI (35%) + CE (65%) |
 
-**2. API Layer (.NET 8 Lambda + API Gateway)**
-- HTTP REST API cho các hoạt động việc làm
-- Ủy quyền JWT qua Cognito
-- Truy cập VPC đến RDS cho dữ liệu ứng viên/việc làm
-- Secrets Manager cho các thông tin nhạy cảm
-- Kích hoạt Step Functions để xử lý không đồng bộ
+**Đầu ra (Output):**
 
-**3. Pipeline Xử lý CV/JD**
-- **Step Functions**: Điều phối workflow xử lý
-- **AWS Lambda (Python 3.12)**: Thực thi các tác vụ xử lý
-  - `cv_jd_processor`: Trích xuất và làm giàu dữ liệu
-  - `job_suggestion_engine`: Xếp hạng việc làm cho ứng viên
-  - `candidate_ranking_engine`: Xếp hạng ứng viên cho việc làm
-- **Container Images**: Được lưu trữ trong Amazon ECR cho xử lý phức tạp
-- **SQS Queue**: Đệm CV uploads, bao gồm Dead Letter Queue (DLQ)
-- **S3 Bucket**: Lưu trữ CV thô với thông báo sự kiện
+```json
+{
+  "profile_id": "candidate-uuid",
+  "file_key": "candidates/{candidateId}/cv.pdf",
+  "bucket": "smarthire-raw-assets",
+  "job_id": "job-uuid | null",
+  "job_title": "Senior Backend Engineer",
+  "masked_cv_text": "Văn bản CV đã ẩn danh (đã xóa PII, tối đa 50K ký tự)",
+  "cv_vector": [0.12, 0.45, "...1024 số thực"],
+  "parsed_data": {
+    "seniority_estimate": "Senior",
+    "frontend_skills": ["React", "TypeScript"],
+    "backend_skills": ["Python", "AWS Lambda"],
+    "devops_skills": ["Docker", "Terraform"],
+    "soft_skills": ["Leadership"],
+    "years_experience": 5,
+    "matching_score": 82.5,
+    "strengths": "Kinh nghiệm backend vững chắc...",
+    "gaps": "Thiếu kinh nghiệm frontend..."
+  },
+  "scoring_details": {
+    "bi_encoder_score": 78.5,
+    "cross_encoder_score": 85.2,
+    "hybrid_score": 82.5,
+    "bi_encoder_weight": 0.35,
+    "cross_encoder_weight": 0.65,
+    "method": "hybrid_bi_cross_encoder"
+  },
+  "interview_guide": [
+    {
+      "question": "Hãy giải thích kiến trúc event-driven...",
+      "skill_targeted": "System Design",
+      "rationale": "Kiểm tra sự hiểu biết về các pattern bất đồng bộ"
+    }
+  ],
+  "masking_report": {
+    "blind_screening": "applied",
+    "total_entities_masked": 12,
+    "by_label": { "PERSON": 3, "ORG": 5, "GPE": 4 }
+  },
+  "jd_text": "Văn bản mô tả công việc",
+  "jd_vector": [0.12, 0.45, "...1024 số thực | null"]
+}
+```
 
-**4. AI & Document Analysis**
-- **Amazon Textract**: Trích xuất text từ PDF resumes
-- **Amazon Bedrock**: Large Language Model để làm giàu & kết hợp
-- **Amazon Comprehend**: NLP để nhận dạng thực thể và cảm xúc
+### B. CvJdProcessor Lambda — Luồng JD
 
-**5. Tầng Dữ liệu**
-- **RDS (PostgreSQL)**: Việc làm, ứng viên, dữ liệu người dùng
-- **DynamoDB**: Theo dõi ứng dụng thời gian thực & kết quả kết hợp
-- **S3**: CV uploads, tài sản tĩnh
+**Kích hoạt (Trigger):** Step Functions (từ .NET backend gọi `StartExecution`)
 
-**6. Cập nhật Thời gian thực**
-- **AWS AppSync**: GraphQL API với subscriptions
-- WebSocket connections để cập nhật dashboard tức thì
-- Tách riêng từ API chính để mở rộng quy mô độc lập
+**Đầu vào (Input):**
 
-**7. Infrastructure as Code**
-- **Terraform**: Cấp phát VPC, RDS, Cognito, mạng, CI/CD
-- **AWS SAM**: Quản lý ngăn xếp API Gateway + Lambda
-- **CodePipeline**: Tự động hóa triển khai từ GitHub
+```json
+{
+  "profile_id": "recruiter",
+  "job_id": "job-uuid"
+}
+```
 
----
+**Các Bước Xử lý:**
 
-#### Các Thành phần Tùy chọn
+| Bước | Thao tác | Dịch vụ | Mô tả |
+| :--- | :--- | :--- | :--- |
+| 1 | Read JD | RDS (PostgreSQL) | `SELECT Title, Description FROM Jobs WHERE Id = job_id` |
+| 2 | Bi-Encoder | Bedrock (Cohere) | Nhúng văn bản JD dưới dạng `search_document` (1024-dim) |
 
-- **AWS WAF**: Web Application Firewall trên CloudFront
-- **Route 53**: Quản lý tên miền tùy chỉnh
-- **ACM**: Chứng chỉ SSL/TLS
-- **VPC Interface Endpoints**: Truy cập riêng tư vào dịch vụ AWS
-- **NAT Gateway**: Truy cập internet đi ra từ Lambda
-- **CloudWatch**: Ghi nhật ký và giám sát
-- **SNS**: Cảnh báo cho tình trạng pipeline
+**Đầu ra (Output):**
+
+```json
+{
+  "profile_id": "recruiter",
+  "job_id": "job-uuid",
+  "job_title": "Senior Backend Engineer",
+  "jd_text": "Mô tả JD thô từ bảng Jobs trong RDS",
+  "jd_vector": [0.12, 0.45, "...1024 số thực"],
+  "masked_cv_text": "Giống với jd_text (để tương thích ngược với CandidateRankingEngine)"
+}
+```
+
+### C. JobSuggestionEngine (Luồng Ứng viên)
+
+**Đầu vào (Input):** Đầu ra từ luồng CV của CvJdProcessor (xem ở trên)
+
+**Đầu ra (Ghi vào DynamoDB + Phát qua AppSync):**
+
+```json
+{
+  "PK": "CANDIDATE#{profile_id}",
+  "SK": "JOB_SUGGESTIONS",
+  "type": "JOB_SUGGESTIONS",
+  "candidateId": "candidate-uuid",
+  "suggestions": [
+    {
+      "jobId": "job-uuid",
+      "jobTitle": "Senior Backend Engineer",
+      "biScore": 78.5,
+      "crossScore": 82.1,
+      "finalScore": 80.8,
+      "matchExplanation": "Rất phù hợp do..."
+    }
+  ],
+  "suggestionCount": 5,
+  "updatedAt": "2026-03-30T10:30:00Z",
+  "expiresAt": 1746000000
+}
+```
+
+**Dữ liệu phát (payload) của AppSync:**
+
+```json
+{
+  "candidateId": "candidate-uuid",
+  "suggestions": "[ ...AWSJSON... ]",
+  "updatedAt": "2026-03-30T10:30:00Z"
+}
+```
+
+### D. CandidateRankingEngine (Luồng Nhà tuyển dụng)
+
+**Đầu vào (Input):** Đầu ra từ luồng JD của CvJdProcessor (xem ở trên)
+
+**Đầu ra (Ghi vào DynamoDB + Phát qua AppSync):**
+
+```json
+{
+  "PK": "JOB#{job_id}",
+  "SK": "CANDIDATE_RANKING",
+  "type": "CANDIDATE_RANKING",
+  "jobId": "job-uuid",
+  "rankedCandidates": [
+    {
+      "candidateId": "candidate-uuid",
+      "rank": 1,
+      "seniority": "Senior",
+      "yearsExperience": 5,
+      "biEncoderScore": 85.2,
+      "crossEncoderScore": 88.7,
+      "finalScore": 87.3,
+      "candidateSnapshot": "Ứng viên có 5 năm kinh nghiệm backend...",
+      "topSkills": ["AWS", "Python", "Lambda"],
+      "interviewGuide": [],
+      "applicationStatus": "POOL"
+    }
+  ],
+  "candidateCount": 15,
+  "updatedAt": "2026-03-30T10:30:00Z"
+}
+```
+
+**Dữ liệu phát (payload) của AppSync:**
+
+```json
+{
+  "jobId": "job-uuid",
+  "rankedCandidates": "[ ...AWSJSON... ]",
+  "updatedAt": "2026-03-30T10:30:00Z"
+}
+```

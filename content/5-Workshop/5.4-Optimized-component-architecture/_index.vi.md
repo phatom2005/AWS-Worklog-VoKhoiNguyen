@@ -1,161 +1,141 @@
 ---
-title : "Luồng Nhà tuyển dụng"
-date : 2024-01-01 
-weight : 4 
+title : "Optimized Component Architecture"
+date : 2026-01-05
+weight : 4
 chapter : false
 pre : " <b> 5.4. </b> "
 ---
 
-#### Hành trình Nhà tuyển dụng: Tạo Việc làm & Xếp hạng Ứng viên
+### A. CvJdProcessor (Lambda Xử lý Được Hợp nhất)
 
-Phần này chi tiết luồng hoàn toàn từ đầu đến cuối khi nhà tuyển dụng tạo hoặc cập nhật bài đăng việc làm, từ lệnh gọi API đến xếp hạng ứng viên thông minh và cập nhật dashboard thời gian thực.
+Xử lý cả luồng CV và JD trong một Lambda duy nhất với logic rẽ nhánh:
 
----
+| Khía cạnh           | Luồng CV (Ứng viên)                              | Luồng JD (Nhà tuyển dụng)                     |
+| ------------------- | ------------------------------------------------ | --------------------------------------------- |
+| **Kích hoạt (Trigger)** | Step Functions (qua S3 → SQS → IngestionTrigger) | Step Functions (qua lời gọi trực tiếp từ backend .NET) |
+| **Nguồn Văn bản** | Textract (PDF trên S3)                           | RDS `Jobs.Description`                        |
+| **Che Dữ liệu PII** | Có (spaCy NER)                                   | Không                                         |
+| **Phân tích bằng Claude** | Có (Agent 1 + Agent 2)                           | Không                                         |
+| **Tạo Vector Nhúng (Embedding)** | Có (Cohere search_document)                      | Có (Cohere search_document)                   |
+| **Cross-Encoder** | Có (nếu có cung cấp JD)                          | Không                                         |
+| **Thời gian chờ (Timeout)** | 300s                                             | 300s                                          |
+| **Bộ nhớ (Memory)** | 1024 MB                                          | 1024 MB                                       |
+| **VPC** | Có (Truy cập RDS để đọc JD)                      | Có (Truy cập RDS để đọc JD)                   |
 
-#### Bước 1: Tạo Việc làm qua API (React + REST API)
+### B. Trách nhiệm của các Engine (Độc lập)
 
-Khi nhà tuyển dụng tạo một công việc mới trong dashboard SmartHire-AI:
+**JobSuggestionEngine (Luồng Ứng viên)**
 
-```
-Nhà tuyển dụng điền form:
-  - Tiêu đề công việc
-  - Mô tả công việc
-  - Kỹ năng bắt buộc
-  - Vị trí
-  - Mức lương
-        ↓
-React SPA gửi yêu cầu POST:
-  Authorization: JWT (Cognito token)
-  Content-Type: application/json
-        ↓
-API Gateway xác thực yêu cầu
-        ↓
-Lambda (.NET 8) xác thực & lưu dữ liệu
-```
+- Nhận: `profile_id`, `file_key`, `cv_vector`, `masked_cv_text`, `parsed_data`, `scoring_details`, `interview_guide`, `masking_report`
+- Lưu: Vector nhúng CV → RDS (`candidate_embeddings`)
+- Lưu: Hồ sơ ứng viên + vector nhúng → RDS (`candidate_profiles_ai`, `candidate_embeddings`)
+- Thực hiện: Tìm kiếm ANN bằng pgvector cho top 20 công việc
+- Xếp hạng lại: Cross-Encoder (top 5 công việc)
+- Chấm điểm: Kết hợp - Hybrid (35% BI-Encoder, 65% Cross-Encoder)
+- Tạo: Lời giải thích mức độ phù hợp cho mỗi công việc (Claude)
+- Lưu trữ: Top 5 đề xuất → DynamoDB (`SK=JOB_SUGGESTIONS`)
 
----
+**CandidateRankingEngine (Luồng Nhà tuyển dụng)**
 
-#### Bước 2: Lưu trữ Việc làm trong RDS
+- Nhận: `job_id`, `jd_vector`, `jd_text`, `job_title`, `masked_cv_text`
+- Lưu: Vector nhúng JD → RDS (`job_embeddings`)
+- Tái sử dụng: Văn bản JD làm đầu vào vector nhúng `search_query` cho tìm kiếm bất đối xứng (asymmetric retrieval)
+- Nhúng lại: JD thành `search_query` (tìm kiếm bất đối xứng)
+- Thực hiện: Tìm kiếm ANN bằng pgvector cho top 50 ứng viên
+- Làm giàu dữ liệu: Lấy hồ sơ ứng viên + hướng dẫn phỏng vấn từ DynamoDB
+- Xếp hạng lại: Cross-Encoder (top 15 ứng viên)
+- Chấm điểm: Kết hợp - Hybrid (30% BI-Encoder, 70% Cross-Encoder)
+- Tạo: Bản tóm tắt ứng viên cho mỗi thứ hạng (Claude)
+- Lưu trữ: Top 15 ứng viên được xếp hạng → DynamoDB (`SK=CANDIDATE_RANKING`)
 
-**RDS (PostgreSQL) Insert:**
+### C. Điều phối: Step Functions (Luồng xử lý Thống nhất)
 
-Dữ liệu công việc được lưu với các trường:
-- ID, recruiter ID, tiêu đề, mô tả
-- Kỹ năng bắt buộc, vị trí, mức lương
-- Ngày đăng, trạng thái
+**Máy trạng thái (State Machine): `cv_processing`**
 
----
-
-#### Bước 3: Kích hoạt Pipeline Xử lý (Lambda + Step Functions)
-
-Ngay sau khi lưu công việc vào RDS, hàm Lambda:
-
-```python
-1. Trích xuất mô tả công việc & kỹ năng bắt buộc
-2. Gọi cv_jd_processor để:
-   - Chuẩn hóa yêu cầu công việc
-   - Tạo embeddings công việc bằng Bedrock
-   - Trích xuất kỹ năng kỹ thuật chính
-3. Gọi Step Functions với bối cảnh công việc:
-   - Phân nhánh tới candidate_ranking_engine
-```
-
----
-
-#### Bước 4: Tìm kiếm & Xếp hạng Ứng viên (candidate_ranking_engine Lambda)
-
-**Xử lý:**
-1. Truy vấn RDS cho tất cả CVs ứng viên với kỹ năng được phân tích
-2. Truy vấn DynamoDB cho embeddings ứng viên được lưu trữ
-3. Cho MỖI ứng viên:
-   - Tính điểm kết hợp
-   - Xếp hạng các thành phần:
-     * Tương tự ngữ nghĩa: 40%
-     * Kỹ năng trùng khớp chính xác: 40%
-     * Căn chỉnh cấp độ kinh nghiệm: 15%
-     * Trùng khớp vị trí: 5%
-4. Lọc theo ngưỡng tối thiểu (65%)
-5. Sắp xếp theo điểm giảm dần
-6. Giới hạn đến 50 ứng viên hàng đầu
-
----
-
-#### Bước 5: Lưu trữ Xếp hạng trong Tầng Dữ liệu
-
-**RDS Update:**
-Lưu trữ xếp hạng với:
-- job ID, candidate ID, match score
-- rank, skill match %, semantic similarity
-- ranked at timestamp
-
-**DynamoDB Record:**
-```
-PK: "JOB#job-12345"
-SK: "RANKING#1#can-555"
+```json
 {
-  "matchScore": 86.45,
-  "candidateId": "can-555",
-  "skills": [...]
+  "Comment": "Điều phối xử lý CV/JD của SmartHire: bộ xử lý thống nhất -> chuyển hướng đến engine ghép nối",
+  "StartAt": "CvJdProcessor",
+  "States": {
+    "CvJdProcessor": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${cv_jd_processor_arn}",
+        "Payload.$": "$"
+      },
+      "OutputPath": "$.Payload",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "States.TaskFailed"
+          ],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ],
+      "Next": "RoutingChoice"
+    },
+    "RoutingChoice": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.profile_id",
+          "StringEquals": "recruiter",
+          "Next": "CandidateRanking"
+        }
+      ],
+      "Default": "JobSuggestion"
+    },
+    "JobSuggestion": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${job_suggestion_engine_arn}",
+        "Payload.$": "$"
+      },
+      "OutputPath": "$.Payload",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "States.TaskFailed"
+          ],
+          "IntervalSeconds": 3,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ],
+      "End": true
+    },
+    "CandidateRanking": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${candidate_ranking_engine_arn}",
+        "Payload.$": "$"
+      },
+      "OutputPath": "$.Payload",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "States.TaskFailed"
+          ],
+          "IntervalSeconds": 3,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ],
+      "End": true
+    }
+  }
 }
-```
-
----
-
-#### Bước 6: Cập nhật Dashboard Thời gian thực (AppSync)
-
-Sau khi xếp hạng hoàn tất:
-
-```
-Step Functions → Lambda kết thúc
-        ↓
-Lambda xuất bản đột biến GraphQL AppSync:
-  "CandidateRankingReady"
-        ↓
-AppSync phát qua subscription
-        ↓
-Dashboard React của Recruiter nhận cập nhật
-        ↓
-UI được làm mới bằng danh sách ứng viên được xếp hạng
-```
-
----
-
-#### Bước 7: Trải nghiệm Dashboard Nhà tuyển dụng
-
-**Trang Chi tiết Công việc Hiển thị:**
-- Tiêu đề công việc, mô tả, ngày đăng
-- **Xếp hạng Ứng viên Trực tiếp** (cập nhật thời gian thực):
-  - 🏆 Ứng viên hàng đầu với điểm 86
-  - 🥈 Ứng viên thứ hai với điểm 81
-  - 🥉 Ứng viên thứ ba với điểm 78
-
-**Hành động Nhà tuyển dụng:**
-- Nhấp vào ứng viên → Xem đầy đủ CV + chi tiết kết hợp
-- Gửi lời mời phỏng vấn
-- Thêm ghi chú / từ chối ứng viên
-- Cập nhật yêu cầu công việc → Re-trigger xếp hạng
-
----
-
-#### Bước 8: Cập nhật Liên tục
-
-**Khi Ứng viên Mới Ứng tuyển:**
-1. Ứng viên tải lên CV
-2. CV được xử lý
-3. Tự động xếp hạng lại chống tất cả các công việc
-4. Nếu điểm > ngưỡng:
-   - Ứng viên được thêm vào danh sách xếp hạng công việc
-   - Nhà tuyển dụng được thông báo ngay lập tức
-   - Dashboard cập nhật thời gian thực
-
----
-
-#### Ưu điểm của Pipeline
-
-✅ Xếp hạng Toàn bộ - Tất cả ứng viên được so sánh với công việc mới
-
-✅ Cập nhật Thời gian thực - Ứng viên mới được xếp hạng ngay khi ứng tuyển
-
-✅ Tự động Retrigger - Khi công việc được cập nhật
-
-✅ Sắp xếp theo Điểm - Ứng viên tốt nhất xuất hiện trước
