@@ -1,67 +1,56 @@
 ---
 title: "Workshop"
-date: 2026-01-05
+date: 2024-01-01
 weight: 5
 chapter: false
 pre: " <b> 5. </b> "
 ---
 
-# SmartHire AI — Backend Candidate Flow Workshop
+# SmartHire Matching System Architecture (v3.0 — Unified Pipeline)
 
-This workshop guides you through building the **SmartHire AI Backend (Candidate Flow)** — a serverless, event-driven CV processing and candidate evaluation system on AWS. By the end, you will have a fully functional pipeline that receives CV uploads, extracts text, analyzes content using Generative AI, and delivers results in real-time.
+#### Overview
 
-![SmartHire AI Architecture](/images/5-Workshop/smarthire_architecture.png)
+**SmartHire-AI** is an intelligent hiring platform built on AWS that revolutionizes recruitment. Candidates upload CVs and receive personalized job suggestions, while recruiters manage postings and see ranked candidates in real-time. The platform leverages AI and serverless AWS services for scalability and performance.
 
-### Table of Contents
+#### Key Features
 
-**5.1.** [Overview](5.1-Workshop-overview/)
+- **For Candidates**: Sign in, upload CV (PDF), and get job suggestions with real-time updates
+- **For Recruiters**: Create and manage job postings, view ranked candidates as they apply
+- **Real-time Updates**: AWS AppSync GraphQL subscriptions push results instantly
+- **AI-Powered Matching**: Bedrock, Comprehend, and Textract power intelligent matching
 
-**5.2.** [Prerequisites](5.2-Prerequisite/)
+### Key Changes
 
-**5.3.** [Foundation Setup — Storage & Queue](5.3-foundation/)
+- **No JD PDF Upload**: Job Description text is read directly from RDS (Jobs.Description) instead of uploading PDF to S3.
+- **Merged Processing Lambda**: text_processor and vector_ops merged into a single cv_jd_processor Lambda.
+- **Direct JD Trigger**: .NET backend calls Step Functions StartExecution directly for JD processing (bypasses S3/SQS/IngestionTrigger).
+- **Simplified State Machine**: Step Functions reduced from 4 states to 3 (CvJdProcessor → RoutingChoice → Engine).
+- **Reduced Latency**: One fewer Lambda cold start per execution (2 Lambdas merged into 1).
+- **Real-Time Contract via AppSync**: Matching engines publish updates through AppSync GraphQL mutations, and frontend receives filtered subscriptions.
 
-&emsp; 5.3.1. [Create S3 Bucket for CV Uploads](5.3-foundation/5.3.1-s3-bucket/)
+### Quick Explanation (Easy View)
+If you remember only 4 things, remember these:
 
-&emsp; 5.3.2. [Configure S3 Bucket Policy & CORS](5.3-foundation/5.3.2-s3-policy/)
+1. Candidate upload CV -> system parses CV -> computes top matching jobs -> pushes realtime to candidate UI.
+2. Recruiter creates job -> system embeds JD -> ranks top candidates -> pushes realtime to recruiter UI.
+3. Step Functions always has 3 steps: `CvJdProcessor -> RoutingChoice -> Engine`.
+4. AppSync is only the realtime delivery layer (publish from Lambda, subscribe from frontend), not the compute layer.
 
-&emsp; 5.3.3. [Create SQS Queue & Dead Letter Queue](5.3-foundation/5.3.3-sqs-queue/)
+### Real-Time Contract (Current)
+- Mutation: `publishJobSuggestions(candidateId, suggestions, updatedAt)`
+- Mutation: `publishCandidateRanking(jobId, rankedCandidates, updatedAt)`
+- Subscription: `onJobSuggestions(candidateId)`
+- Subscription: `onCandidateRanking(jobId)`
 
-**5.4.** [IAM Roles & Policies](5.4-iam/)
+Important: schema field is `updatedAt` (not `timestamp`).
 
-&emsp; 5.4.1. [Create Lambda Execution Roles](5.4-iam/5.4.1-lambda-roles/)
+#### Content
 
-&emsp; 5.4.2. [Create S3 Event Notification Policy](5.4-iam/5.4.2-s3-event-policy/)
-
-**5.5.** [Backend API — SAM Deployment](5.5-backend-api/)
-
-&emsp; 5.5.1. [Configure SAM Template](5.5-backend-api/5.5.1-sam-template/)
-
-&emsp; 5.5.2. [API Gateway & Cognito Authorizer](5.5-backend-api/5.5.2-apigw-cognito/)
-
-&emsp; 5.5.3. [Deploy .NET 8 Lambda Function](5.5-backend-api/5.5.3-deploy-lambda/)
-
-**5.6.** [Event-Driven Pipeline — CV Processing](5.6-pipeline/)
-
-&emsp; 5.6.1. [S3 Event Notification → SQS](5.6-pipeline/5.6.1-s3-event/)
-
-&emsp; 5.6.2. [Ingestion Trigger Lambda](5.6-pipeline/5.6.2-ingestion-trigger/)
-
-&emsp; 5.6.3. [CV/JD Processor Lambda (Textract + Bedrock)](5.6-pipeline/5.6.3-cv-processor/)
-
-**5.7.** [AI Evaluation — Step Functions Workflow](5.7-step-functions/)
-
-&emsp; 5.7.1. [Job Suggestion Engine](5.7-step-functions/5.7.1-job-suggestion/)
-
-&emsp; 5.7.2. [Candidate Ranking Engine](5.7-step-functions/5.7.2-candidate-ranking/)
-
-**5.8.** [Infrastructure as Code — Terraform](5.8-terraform/)
-
-&emsp; 5.8.1. [Terraform Modules Overview](5.8-terraform/5.8.1-modules/)
-
-&emsp; 5.8.2. [Deploy with Terraform](5.8-terraform/5.8.2-deploy/)
-
-**5.9.** [Verify & Test](5.9-verify/)
-
-**5.10.** [Cleanup](5.10-cleanup/)
-
-**5.11.** [Appendices — Source Code](5.11-appendices/)
+1. [System Workflows](5.1-System-workflows/)
+2. [Detailed Data Flows](5.2-Detailed-data-flows/)
+3. [Data Models & Entity Relationships](5.3-Data-models-entity-relationships/)
+4. [Optimized Component Architecture](5.4-Optimized-component-architecture/)
+5. [RDS Postgres Schema](5.5-RDS-postgres-schema/)
+6. [DynamoDB Schema](5.6-DynamoDB-schema/)
+7. [Infrastructure Components](5.7-Infrastructure-components/)
+8. [Observability & Monitoring](5.8-Observability-monitoring/)
