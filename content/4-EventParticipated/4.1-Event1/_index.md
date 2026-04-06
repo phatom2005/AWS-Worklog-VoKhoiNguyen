@@ -1,5 +1,5 @@
 ---
-title: "Event 1"
+title: "AWS re:Invent Recap HCMC"
 date: 2026-01-29
 weight: 1
 chapter: false
